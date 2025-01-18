@@ -1,8 +1,6 @@
 name: Test Python Setup
-
 on:
   workflow_dispatch:  # This allows manual triggering
-
 jobs:
   test-python:
     runs-on: ubuntu-latest
@@ -21,4 +19,8 @@ jobs:
         pip install pandas requests
         
     - name: Run test script
-      run: python scripts/test.py
+      run: |
+        python -m pip install pandas requests  # Ensure dependencies are available
+        python scripts/test.py
+      env:
+        PYTHONUNBUFFERED: 1  # This ensures Python prints output immediately
