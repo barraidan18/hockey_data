@@ -15,6 +15,8 @@ def fetch_skater_data(season_year=2023):
     Returns:
         pandas.DataFrame: Skater data for the specified season
     """
+    import io  # Add this import at the top of the file
+    
     url = f"https://moneypuck.com/moneypuck/playerData/seasonSummary/{season_year}/regular/skaters.csv"
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -23,7 +25,9 @@ def fetch_skater_data(season_year=2023):
         print(f"Fetching {season_year} season data from MoneyPuck...")
         response = requests.get(url, headers=headers)
         response.raise_for_status()
-        df = pd.read_csv(response.text.splitlines())
+        
+        # Use StringIO to create a file-like object from the response content
+        df = pd.read_csv(io.StringIO(response.content.decode('utf-8')))
         print(f"Successfully fetched {len(df)} records for {season_year} season")
         return df
     except requests.exceptions.RequestException as e:
