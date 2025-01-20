@@ -33,36 +33,13 @@ const HockeyDashboard = () => {
     fetchData();
   }, []);
 
-  // Function to determine bar color based on value
   const getBarColor = (value) => {
     if (value === undefined || value === null) return 'rgb(128, 128, 128)';
-    
-    // For positive values: more green (red goes down)
-    // For negative values: more red (green goes down)
-    const intensity = Math.min(Math.abs(value) / 3, 1); // Scale by the maximum expected value (3)
-    const baseColor = value >= 0 ? 
-      `rgb(${Math.round(255 * (1 - intensity))}, 255, 0)` : // Positive: reduce red
-      `rgb(255, ${Math.round(255 * (1 - intensity))}, 0)`; // Negative: reduce green
-    
-    return baseColor;
+    return value >= 0 ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)';
   };
 
   const getPlayerData = (situation) => {
     return data.find(row => row.name === selectedPlayer && row.situation === situation) || {};
-  };
-
-  const getMetricDescription = (metricName) => {
-    const descriptions = {
-      'G60': 'Goals/60',
-      'A160': 'Primary Assists/60',
-      'xGImpact': 'Expected Goals Impact',
-      'CFImpact': 'Shot Attempts Impact',
-      'xGF60': 'Expected Goals For/60',
-      'CF60': 'Shot Attempts For/60',
-      'xGA60': 'Expected Goals Against/60',
-      'CA60': 'Shot Attempts Against/60'
-    };
-    return descriptions[metricName] || metricName;
   };
 
   const getFiveOnFiveMetrics = (playerData) => {
@@ -106,7 +83,10 @@ const HockeyDashboard = () => {
           </div>
           <div className="h-[400px] sm:h-96">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={getFiveOnFiveMetrics(getPlayerData('5on5'))}>
+              <BarChart 
+                data={getFiveOnFiveMetrics(getPlayerData('5on5'))}
+                margin={{ top: 20, right: 30, left: 20, bottom: 100 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="description" 
@@ -126,39 +106,29 @@ const HockeyDashboard = () => {
                   labelFormatter={(label) => label}
                 />
                 <Bar 
-                  dataKey="value" 
-                  shape={(props) => {
-                    const { x, y, width, height, value } = props;
-                    if (value === undefined || value === null) return null;
-
-                    // For negative values, we need to adjust the y position and height
-                    const adjustedY = value >= 0 ? y : y + height;
-                    const adjustedHeight = Math.abs(height);
-
-                    return (
-                      <rect 
-                        x={x} 
-                        y={adjustedY}
-                        width={width} 
-                        height={adjustedHeight} 
-                        fill={getBarColor(value)}
+                  dataKey="value"
+                  fill="#8884d8"
+                  isAnimationActive={false}
+                  onAnimationStart={() => {}}
+                  onAnimationEnd={() => {}}
+                  animationDuration={0}
+                >
+                  {
+                    getFiveOnFiveMetrics(getPlayerData('5on5')).map((entry, index) => (
+                      <rect
+                        key={`bar-${index}`}
+                        x={0}
+                        y={0}
+                        width={0}
+                        height={0}
+                        fill={getBarColor(entry.value)}
                       />
-                    );
-                  }}
-                />
+                    ))
+                  }
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
-        </div>
-
-        <div className="p-4 border rounded bg-white">
-          <h2 className="text-xl font-bold mb-4">4 on 5 Performance</h2>
-          <p className="text-center text-gray-500">Coming soon</p>
-        </div>
-
-        <div className="p-4 border rounded bg-white">
-          <h2 className="text-xl font-bold mb-4">5 on 4 Performance</h2>
-          <p className="text-center text-gray-500">Coming soon</p>
         </div>
       </div>
     </div>
