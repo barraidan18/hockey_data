@@ -35,38 +35,56 @@ const HockeyDashboard = () => {
 
   // Function to determine bar color based on value
   const getBarColor = (value) => {
-    // Normalize value between 0 and 1 based on our -3 to 3 scale
-    const normalizedValue = (value + 3) / 6;
-    // Generate color between red (low) and green (high)
-    const red = Math.round(255 * (1 - normalizedValue));
-    const green = Math.round(255 * normalizedValue);
-    return `rgb(${red}, ${green}, 0)`;
+    if (value === undefined || value === null) return 'rgb(128, 128, 128)';
+    
+    // For positive values: more green (red goes down)
+    // For negative values: more red (green goes down)
+    const intensity = Math.min(Math.abs(value) / 3, 1); // Scale by the maximum expected value (3)
+    const baseColor = value >= 0 ? 
+      `rgb(${Math.round(255 * (1 - intensity))}, 255, 0)` : // Positive: reduce red
+      `rgb(255, ${Math.round(255 * (1 - intensity))}, 0)`; // Negative: reduce green
+    
+    return baseColor;
   };
 
   const getPlayerData = (situation) => {
     return data.find(row => row.name === selectedPlayer && row.situation === situation) || {};
   };
 
+  const getMetricDescription = (metricName) => {
+    const descriptions = {
+      'G60': 'Goals/60',
+      'A160': 'Primary Assists/60',
+      'xGImpact': 'Expected Goals Impact',
+      'CFImpact': 'Shot Attempts Impact',
+      'xGF60': 'Expected Goals For/60',
+      'CF60': 'Shot Attempts For/60',
+      'xGA60': 'Expected Goals Against/60',
+      'CA60': 'Shot Attempts Against/60'
+    };
+    return descriptions[metricName] || metricName;
+  };
+
   const getFiveOnFiveMetrics = (playerData) => {
     return [
-      { name: 'G60', value: playerData.G60 },
-      { name: 'A160', value: playerData.A160 },
-      { name: 'xGImpact', value: playerData.xGImpact },
-      { name: 'CFImpact', value: playerData.CFImpact },
-      { name: 'xGF60', value: playerData.xGF60 },
-      { name: 'CF60', value: playerData.CF60 },
-      { name: 'xGA60', value: playerData.xGA60 },
-      { name: 'CA60', value: playerData.CA60 }
+      { name: 'G60', description: 'Goals/60', value: playerData.G60 },
+      { name: 'A160', description: 'Primary Assists/60', value: playerData.A160 },
+      { name: 'xGImpact', description: 'Expected Goals Impact', value: playerData.xGImpact },
+      { name: 'CFImpact', description: 'Shot Attempts Impact', value: playerData.CFImpact },
+      { name: 'xGF60', description: 'Expected Goals For/60', value: playerData.xGF60 },
+      { name: 'CF60', description: 'Shot Attempts For/60', value: playerData.CF60 },
+      { name: 'xGA60', description: 'Expected Goals Against/60', value: playerData.xGA60 },
+      { name: 'CA60', description: 'Shot Attempts Against/60', value: playerData.CA60 }
     ].filter(metric => metric.value !== undefined);
   };
 
   return (
-    <div className="p-4">
+    <div className="p-2 sm:p-4">
       <div className="mb-4">
         <select 
           value={selectedPlayer} 
           onChange={(e) => setSelectedPlayer(e.target.value)}
-          className="w-64 p-2 border rounded text-white bg-gray-800"
+          className="w-full sm:w-64 p-2 border rounded text-white bg-gray-800"
         >
           {players.map(player => (
             <option key={player} value={player} className="text-black bg-white">
@@ -76,21 +94,28 @@ const HockeyDashboard = () => {
         </select>
       </div>
 
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
-        <div className="col-span-1 md:col-span-3 p-4 border rounded bg-white">
+      <div className="grid gap-2 sm:gap-4 grid-cols-1">
+        <div className="p-2 sm:p-4 border rounded bg-white">
           <div className="mb-4">
-            <h2 className="text-xl font-bold">5 on 5 Performance</h2>
+            <h2 className="text-lg sm:text-xl font-bold">5 on 5 Performance</h2>
             {selectedPlayer && (
-              <p className="text-sm text-gray-600">
+              <p className="text-xs sm:text-sm text-gray-600 break-words">
                 {getPlayerData('5on5').name} | {getPlayerData('5on5').team} | {getPlayerData('5on5').position} | Ice time: {(getPlayerData('5on5').icetime / 60).toFixed(1)} minutes
               </p>
             )}
           </div>
-          <div className="h-96">
+          <div className="h-[400px] sm:h-96">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={getFiveOnFiveMetrics(getPlayerData('5on5'))}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
+                <XAxis 
+                  dataKey="description" 
+                  angle={-45} 
+                  textAnchor="end" 
+                  height={100} 
+                  interval={0}
+                  tick={{fontSize: 12}}
+                />
                 <YAxis 
                   domain={[-3, 3]} 
                   tickFormatter={(value) => value.toFixed(1)}
@@ -98,18 +123,25 @@ const HockeyDashboard = () => {
                 />
                 <Tooltip 
                   formatter={(value) => value.toFixed(2)}
+                  labelFormatter={(label) => label}
                 />
                 <Bar 
                   dataKey="value" 
                   shape={(props) => {
-                    const { fill, x, y, width, height } = props;
+                    const { x, y, width, height, value } = props;
+                    if (value === undefined || value === null) return null;
+
+                    // For negative values, we need to adjust the y position and height
+                    const adjustedY = value >= 0 ? y : y + height;
+                    const adjustedHeight = Math.abs(height);
+
                     return (
                       <rect 
                         x={x} 
-                        y={y} 
+                        y={adjustedY}
                         width={width} 
-                        height={height} 
-                        fill={getBarColor(props.value)}
+                        height={adjustedHeight} 
+                        fill={getBarColor(value)}
                       />
                     );
                   }}
