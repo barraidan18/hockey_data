@@ -10,6 +10,7 @@ const HockeyDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Using raw GitHub URL for your data
         const response = await fetch('https://raw.githubusercontent.com/barraidan18/hockey_data/main/data/hockey_stats_2023.csv');
         const csvText = await response.text();
         const result = Papa.parse(csvText, {
@@ -32,13 +33,36 @@ const HockeyDashboard = () => {
     fetchData();
   }, []);
 
+  // Function to determine bar color based on value
   const getBarColor = (value) => {
     if (value === undefined || value === null) return 'rgb(128, 128, 128)';
-    return value >= 0 ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)';
+    
+    // For positive values: more green (red goes down)
+    // For negative values: more red (green goes down)
+    const intensity = Math.min(Math.abs(value) / 3, 1); // Scale by the maximum expected value (3)
+    const baseColor = value >= 0 ? 
+      `rgb(${Math.round(255 * (1 - intensity))}, 255, 0)` : // Positive: reduce red
+      `rgb(255, ${Math.round(255 * (1 - intensity))}, 0)`; // Negative: reduce green
+    
+    return baseColor;
   };
 
   const getPlayerData = (situation) => {
     return data.find(row => row.name === selectedPlayer && row.situation === situation) || {};
+  };
+
+  const getMetricDescription = (metricName) => {
+    const descriptions = {
+      'G60': 'Goals/60',
+      'A160': 'Primary Assists/60',
+      'xGImpact': 'Expected Goals Impact',
+      'CFImpact': 'Shot Attempts Impact',
+      'xGF60': 'Expected Goals For/60',
+      'CF60': 'Shot Attempts For/60',
+      'xGA60': 'Expected Goals Against/60',
+      'CA60': 'Shot Attempts Against/60'
+    };
+    return descriptions[metricName] || metricName;
   };
 
   const getFiveOnFiveMetrics = (playerData) => {
@@ -52,81 +76,6 @@ const HockeyDashboard = () => {
       { name: 'xGA60', description: 'Expected Goals Against/60', value: playerData.xGA60 },
       { name: 'CA60', description: 'Shot Attempts Against/60', value: playerData.CA60 }
     ].filter(metric => metric.value !== undefined);
-  };
-
-  const getFourOnFiveMetrics = (playerData) => {
-    return [
-      { name: 'xGA60', description: 'Expected Goals Against/60', value: playerData.xGA60 },
-      { name: 'CA60', description: 'Shot Attempts Against/60', value: playerData.CA60 }
-    ].filter(metric => metric.value !== undefined);
-  };
-
-  const getFiveOnFourMetrics = (playerData) => {
-    return [
-      { name: 'xGF60', description: 'Expected Goals For/60', value: playerData.xGF60 },
-      { name: 'CF60', description: 'Shot Attempts For/60', value: playerData.CF60 }
-    ].filter(metric => metric.value !== undefined);
-  };
-
-  const ChartComponent = ({ data, title, situation }) => {
-    const playerData = getPlayerData(situation);
-    return (
-      <div className="p-2 sm:p-4 border rounded bg-white">
-        <div className="mb-4">
-          <h2 className="text-lg sm:text-xl font-bold">{title}</h2>
-          {selectedPlayer && (
-            <p className="text-xs sm:text-sm text-gray-600 break-words">
-              {playerData.name} | {playerData.team} | {playerData.position} | Ice time: {(playerData.icetime / 60).toFixed(1)} minutes
-            </p>
-          )}
-        </div>
-        <div className="h-[300px] sm:h-72">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart 
-              data={data}
-              margin={{ top: 20, right: 30, left: 20, bottom: 100 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="description" 
-                angle={-45} 
-                textAnchor="end" 
-                height={100} 
-                interval={0}
-                tick={{fontSize: 12}}
-              />
-              <YAxis 
-                domain={[-3, 3]} 
-                tickFormatter={(value) => value.toFixed(1)}
-                allowDataOverflow={true}
-              />
-              <Tooltip 
-                formatter={(value) => value.toFixed(2)}
-                labelFormatter={(label) => label}
-              />
-              <Bar 
-                dataKey="value"
-                fill="#8884d8"
-                isAnimationActive={false}
-              >
-                {
-                  data.map((entry, index) => (
-                    <rect
-                      key={`bar-${index}`}
-                      x={0}
-                      y={0}
-                      width={0}
-                      height={0}
-                      fill={getBarColor(entry.value)}
-                    />
-                  ))
-                }
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-    );
   };
 
   return (
@@ -146,21 +95,71 @@ const HockeyDashboard = () => {
       </div>
 
       <div className="grid gap-2 sm:gap-4 grid-cols-1">
-        <ChartComponent 
-          data={getFiveOnFiveMetrics(getPlayerData('5on5'))} 
-          title="5 on 5 Performance"
-          situation="5on5"
-        />
-        <ChartComponent 
-          data={getFourOnFiveMetrics(getPlayerData('4on5'))} 
-          title="Penalty Kill (4 on 5)"
-          situation="4on5"
-        />
-        <ChartComponent 
-          data={getFiveOnFourMetrics(getPlayerData('5on4'))} 
-          title="Power Play (5 on 4)"
-          situation="5on4"
-        />
+        <div className="p-2 sm:p-4 border rounded bg-white">
+          <div className="mb-4">
+            <h2 className="text-lg sm:text-xl font-bold">5 on 5 Performance</h2>
+            {selectedPlayer && (
+              <p className="text-xs sm:text-sm text-gray-600 break-words">
+                {getPlayerData('5on5').name} | {getPlayerData('5on5').team} | {getPlayerData('5on5').position} | Ice time: {(getPlayerData('5on5').icetime / 60).toFixed(1)} minutes
+              </p>
+            )}
+          </div>
+          <div className="h-[400px] sm:h-96">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={getFiveOnFiveMetrics(getPlayerData('5on5'))}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="description" 
+                  angle={-45} 
+                  textAnchor="end" 
+                  height={100} 
+                  interval={0}
+                  tick={{fontSize: 12}}
+                />
+                <YAxis 
+                  domain={[-3, 3]} 
+                  tickFormatter={(value) => value.toFixed(1)}
+                  allowDataOverflow={true}
+                />
+                <Tooltip 
+                  formatter={(value) => value.toFixed(2)}
+                  labelFormatter={(label) => label}
+                />
+                <Bar 
+                  dataKey="value" 
+                  shape={(props) => {
+                    const { x, y, width, height, value } = props;
+                    if (value === undefined || value === null) return null;
+
+                    // For negative values, we need to adjust the y position and height
+                    const adjustedY = value >= 0 ? y : y + height;
+                    const adjustedHeight = Math.abs(height);
+
+                    return (
+                      <rect 
+                        x={x} 
+                        y={adjustedY}
+                        width={width} 
+                        height={adjustedHeight} 
+                        fill={getBarColor(value)}
+                      />
+                    );
+                  }}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="p-4 border rounded bg-white">
+          <h2 className="text-xl font-bold mb-4">4 on 5 Performance</h2>
+          <p className="text-center text-gray-500">Coming soon</p>
+        </div>
+
+        <div className="p-4 border rounded bg-white">
+          <h2 className="text-xl font-bold mb-4">5 on 4 Performance</h2>
+          <p className="text-center text-gray-500">Coming soon</p>
+        </div>
       </div>
     </div>
   );
