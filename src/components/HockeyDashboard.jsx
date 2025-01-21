@@ -10,7 +10,6 @@ const HockeyDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Using raw GitHub URL for your data
         const response = await fetch('https://raw.githubusercontent.com/barraidan18/hockey_data/main/data/hockey_stats_2023.csv');
         const csvText = await response.text();
         const result = Papa.parse(csvText, {
@@ -69,7 +68,7 @@ const HockeyDashboard = () => {
     ].filter(metric => metric.value !== undefined);
   };
 
-  const renderMetricChart = (data, title, situation) => {
+  const ChartComponent = ({ data, title, situation }) => {
     const playerData = getPlayerData(situation);
     return (
       <div className="p-2 sm:p-4 border rounded bg-white">
@@ -129,7 +128,6 @@ const HockeyDashboard = () => {
       </div>
     );
   };
-  
 
   return (
     <div className="p-2 sm:p-4">
@@ -148,9 +146,21 @@ const HockeyDashboard = () => {
       </div>
 
       <div className="grid gap-2 sm:gap-4 grid-cols-1">
-        {renderMetricChart(getFiveOnFiveMetrics(getPlayerData('5on5')), '5 on 5 Performance', '5on5')}
-        {renderMetricChart(getFourOnFiveMetrics(getPlayerData('4on5')), 'Penalty Kill (4 on 5)', '4on5')}
-        {renderMetricChart(getFiveOnFourMetrics(getPlayerData('5on4')), 'Power Play (5 on 4)', '5on4')}
+        <ChartComponent 
+          data={getFiveOnFiveMetrics(getPlayerData('5on5'))} 
+          title="5 on 5 Performance"
+          situation="5on5"
+        />
+        <ChartComponent 
+          data={getFourOnFiveMetrics(getPlayerData('4on5'))} 
+          title="Penalty Kill (4 on 5)"
+          situation="4on5"
+        />
+        <ChartComponent 
+          data={getFiveOnFourMetrics(getPlayerData('5on4'))} 
+          title="Power Play (5 on 4)"
+          situation="5on4"
+        />
       </div>
     </div>
   );
