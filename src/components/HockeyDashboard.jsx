@@ -65,6 +65,20 @@ const HockeyDashboard = () => {
     return descriptions[metricName] || metricName;
   };
 
+  const getFourOnFiveMetrics = (playerData) => {
+    return [
+      { name: 'xGA60', description: 'Expected Goals Against/60', value: playerData.xGA60 },
+      { name: 'CA60', description: 'Shot Attempts Against/60', value: playerData.CA60 }
+    ].filter(metric => metric.value !== undefined);
+  };
+
+  const getFiveOnFourMetrics = (playerData) => {
+    return [
+      { name: 'xGF60', description: 'Expected Goals For/60', value: playerData.xGF60 },
+      { name: 'CF60', description: 'Shot Attempts For/60', value: playerData.CF60 }
+    ].filter(metric => metric.value !== undefined);
+  };
+
   const getFiveOnFiveMetrics = (playerData) => {
     return [
       { name: 'G60', description: 'Goals/60', value: playerData.G60 },
@@ -151,14 +165,114 @@ const HockeyDashboard = () => {
           </div>
         </div>
 
-        <div className="p-4 border rounded bg-white">
-          <h2 className="text-xl font-bold mb-4">4 on 5 Performance</h2>
-          <p className="text-center text-gray-500">Coming soon</p>
+        <div className="p-2 sm:p-4 border rounded bg-white">
+          <div className="mb-4">
+            <h2 className="text-lg sm:text-xl font-bold">Penalty Kill (4 on 5)</h2>
+            {selectedPlayer && (
+              <p className="text-xs sm:text-sm text-gray-600 break-words">
+                {getPlayerData('4on5').name} | {getPlayerData('4on5').team} | {getPlayerData('4on5').position} | Ice time: {(getPlayerData('4on5').icetime / 60).toFixed(1)} minutes
+              </p>
+            )}
+          </div>
+          <div className="h-[400px] sm:h-96">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={getFourOnFiveMetrics(getPlayerData('4on5'))}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="description" 
+                  angle={-45} 
+                  textAnchor="end" 
+                  height={100} 
+                  interval={0}
+                  tick={{fontSize: 12}}
+                />
+                <YAxis 
+                  domain={[-3, 3]} 
+                  tickFormatter={(value) => value.toFixed(1)}
+                  allowDataOverflow={true}
+                />
+                <Tooltip 
+                  formatter={(value) => value.toFixed(2)}
+                  labelFormatter={(label) => label}
+                />
+                <Bar 
+                  dataKey="value" 
+                  shape={(props) => {
+                    const { x, y, width, height, value } = props;
+                    if (value === undefined || value === null) return null;
+
+                    const adjustedY = value >= 0 ? y : y + height;
+                    const adjustedHeight = Math.abs(height);
+
+                    return (
+                      <rect 
+                        x={x} 
+                        y={adjustedY}
+                        width={width} 
+                        height={adjustedHeight} 
+                        fill={getBarColor(value)}
+                      />
+                    );
+                  }}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
-        <div className="p-4 border rounded bg-white">
-          <h2 className="text-xl font-bold mb-4">5 on 4 Performance</h2>
-          <p className="text-center text-gray-500">Coming soon</p>
+        <div className="p-2 sm:p-4 border rounded bg-white">
+          <div className="mb-4">
+            <h2 className="text-lg sm:text-xl font-bold">Power Play (5 on 4)</h2>
+            {selectedPlayer && (
+              <p className="text-xs sm:text-sm text-gray-600 break-words">
+                {getPlayerData('5on4').name} | {getPlayerData('5on4').team} | {getPlayerData('5on4').position} | Ice time: {(getPlayerData('5on4').icetime / 60).toFixed(1)} minutes
+              </p>
+            )}
+          </div>
+          <div className="h-[400px] sm:h-96">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={getFiveOnFourMetrics(getPlayerData('5on4'))}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="description" 
+                  angle={-45} 
+                  textAnchor="end" 
+                  height={100} 
+                  interval={0}
+                  tick={{fontSize: 12}}
+                />
+                <YAxis 
+                  domain={[-3, 3]} 
+                  tickFormatter={(value) => value.toFixed(1)}
+                  allowDataOverflow={true}
+                />
+                <Tooltip 
+                  formatter={(value) => value.toFixed(2)}
+                  labelFormatter={(label) => label}
+                />
+                <Bar 
+                  dataKey="value" 
+                  shape={(props) => {
+                    const { x, y, width, height, value } = props;
+                    if (value === undefined || value === null) return null;
+
+                    const adjustedY = value >= 0 ? y : y + height;
+                    const adjustedHeight = Math.abs(height);
+
+                    return (
+                      <rect 
+                        x={x} 
+                        y={adjustedY}
+                        width={width} 
+                        height={adjustedHeight} 
+                        fill={getBarColor(value)}
+                      />
+                    );
+                  }}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
     </div>
