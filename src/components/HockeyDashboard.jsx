@@ -122,9 +122,7 @@ const HockeyDashboard = () => {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart 
                 data={getFiveOnFiveMetrics(getPlayerData('5on5'))}
-                margin={{ top: 20, right: 60, left: 40, bottom: 130 }}
-                barCategoryGap={20}
-                barGap={4}
+                margin={{ top: 20, right: 30, left: 20, bottom: 120 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
@@ -134,7 +132,6 @@ const HockeyDashboard = () => {
                   height={120}  
                   interval={0}
                   tick={{fontSize: 12}}
-                  tickMargin={30}
                 />
                 <YAxis 
                   domain={[-3, 3]} 
