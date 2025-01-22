@@ -120,19 +120,16 @@ const HockeyDashboard = () => {
           </div>
           <div className="h-[400px] sm:h-96">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart 
-                data={getFiveOnFiveMetrics(getPlayerData('5on5'))}
-                margin={{ top: 20, right: 40, left: 20, bottom: 120 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="description" 
-                  angle={-45} 
-                  textAnchor="end" 
-                  height={100} 
-                  interval={0}
-                  tick={{fontSize: 12}}
-                />
+            <BarChart data={getFiveOnFiveMetrics(getPlayerData('5on5'))}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis 
+                dataKey="description" 
+                angle={-45} 
+                textAnchor="end" 
+                height={100}
+                interval={0}
+                tick={{fontSize: 12}}
+              />
                 <YAxis 
                   domain={[-3, 3]} 
                   tickFormatter={(value) => value.toFixed(1)}
