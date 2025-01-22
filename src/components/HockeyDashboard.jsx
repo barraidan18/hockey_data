@@ -191,7 +191,7 @@ const HockeyDashboard = () => {
                   dataKey="description" 
                   angle={-45} 
                   textAnchor="end" 
-                  height={100} 
+                  height={120} 
                   interval={0}
                   tick={{fontSize: 12}}
                 />
@@ -249,7 +249,7 @@ const HockeyDashboard = () => {
                   dataKey="description" 
                   angle={-45} 
                   textAnchor="end" 
-                  height={100} 
+                  height={120} 
                   interval={0}
                   tick={{fontSize: 12}}
                 />
