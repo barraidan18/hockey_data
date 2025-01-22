@@ -108,9 +108,9 @@ const HockeyDashboard = () => {
         </select>
       </div>
 
-      <div className="grid gap-2 sm:gap-4 grid-cols-1">
-        <div className="p-2 sm:p-4 border rounded bg-white">
-          <div className="mb-4">
+      <div className="grid gap-8 sm:gap-12 grid-cols-1">
+        <div className="p-6 sm:p-8 border rounded bg-white">
+          <div className="mb-6">
             <h2 className="text-lg sm:text-xl font-bold">5 on 5 Performance</h2>
             {selectedPlayer && (
               <p className="text-xs sm:text-sm text-gray-600 break-words">
@@ -120,7 +120,10 @@ const HockeyDashboard = () => {
           </div>
           <div className="h-[400px] sm:h-96">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={getFiveOnFiveMetrics(getPlayerData('5on5'))}>
+              <BarChart 
+                data={getFiveOnFiveMetrics(getPlayerData('5on5'))}
+                margin={{ top: 20, right: 40, left: 20, bottom: 120 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="description" 
@@ -165,8 +168,8 @@ const HockeyDashboard = () => {
           </div>
         </div>
 
-        <div className="p-2 sm:p-4 border rounded bg-white">
-          <div className="mb-4">
+        <div className="p-6 sm:p-8 border rounded bg-white">
+          <div className="mb-6">
             <h2 className="text-lg sm:text-xl font-bold">Penalty Kill (4 on 5)</h2>
             {selectedPlayer && (
               <p className="text-xs sm:text-sm text-gray-600 break-words">
@@ -176,7 +179,10 @@ const HockeyDashboard = () => {
           </div>
           <div className="h-[400px] sm:h-96">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={getFourOnFiveMetrics(getPlayerData('4on5'))}>
+              <BarChart 
+                data={getFourOnFiveMetrics(getPlayerData('4on5'))}
+                margin={{ top: 20, right: 40, left: 20, bottom: 120 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="description" 
@@ -220,8 +226,8 @@ const HockeyDashboard = () => {
           </div>
         </div>
 
-        <div className="p-2 sm:p-4 border rounded bg-white">
-          <div className="mb-4">
+        <div className="p-6 sm:p-8 border rounded bg-white">
+          <div className="mb-6">
             <h2 className="text-lg sm:text-xl font-bold">Power Play (5 on 4)</h2>
             {selectedPlayer && (
               <p className="text-xs sm:text-sm text-gray-600 break-words">
@@ -231,7 +237,10 @@ const HockeyDashboard = () => {
           </div>
           <div className="h-[400px] sm:h-96">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={getFiveOnFourMetrics(getPlayerData('5on4'))}>
+              <BarChart 
+                data={getFiveOnFourMetrics(getPlayerData('5on4'))}
+                margin={{ top: 20, right: 40, left: 20, bottom: 120 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="description" 
