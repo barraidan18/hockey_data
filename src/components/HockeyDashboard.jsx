@@ -108,9 +108,9 @@ const HockeyDashboard = () => {
         </select>
       </div>
 
-      <div className="grid gap-4 sm:gap-6 grid-cols-1">
-        <div className="p-4 sm:p-6 border rounded bg-white">
-          <div className="mb-5">
+      <div className="grid gap-8 sm:gap-12 grid-cols-1">
+        <div className="p-6 sm:p-8 border rounded bg-white">
+          <div className="mb-6">
             <h2 className="text-lg sm:text-xl font-bold">5 on 5 Performance</h2>
             {selectedPlayer && (
               <p className="text-xs sm:text-sm text-gray-600 break-words">
@@ -122,19 +122,16 @@ const HockeyDashboard = () => {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart 
                 data={getFiveOnFiveMetrics(getPlayerData('5on5'))}
-                margin={{ top: 20, right: 60, left: 40, bottom: 130 }}
-                barCategoryGap={20}
-                barGap={4}
+                margin={{ top: 20, right: 40, left: 20, bottom: 120 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="description" 
                   angle={-45} 
                   textAnchor="end" 
-                  height={120}  
+                  height={100} 
                   interval={0}
                   tick={{fontSize: 12}}
-                  tickMargin={30}
                 />
                 <YAxis 
                   domain={[-3, 3]} 
@@ -171,8 +168,8 @@ const HockeyDashboard = () => {
           </div>
         </div>
 
-        <div className="p-4 sm:p-6 border rounded bg-white">
-          <div className="mb-5">
+        <div className="p-6 sm:p-8 border rounded bg-white">
+          <div className="mb-6">
             <h2 className="text-lg sm:text-xl font-bold">Penalty Kill (4 on 5)</h2>
             {selectedPlayer && (
               <p className="text-xs sm:text-sm text-gray-600 break-words">
@@ -229,8 +226,8 @@ const HockeyDashboard = () => {
           </div>
         </div>
 
-        <div className="p-4 sm:p-6 border rounded bg-white">
-          <div className="mb-5">
+        <div className="p-6 sm:p-8 border rounded bg-white">
+          <div className="mb-6">
             <h2 className="text-lg sm:text-xl font-bold">Power Play (5 on 4)</h2>
             {selectedPlayer && (
               <p className="text-xs sm:text-sm text-gray-600 break-words">
