@@ -6,12 +6,13 @@ const HockeyDashboard = () => {
   const [data, setData] = useState([]);
   const [selectedPlayer, setSelectedPlayer] = useState('');
   const [players, setPlayers] = useState([]);
-  
+  const AVAILABLE_SEASONS = [2023,2022,2021];  // We'll expand this as more seasons are added
+  const [selectedSeason, setSelectedSeason] = useState(AVAILABLE_SEASONS[0]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Using raw GitHub URL for your data
-        const response = await fetch('https://raw.githubusercontent.com/barraidan18/hockey_data/main/data/hockey_stats_2023.csv');
+        const response = await fetch(`https://raw.githubusercontent.com/barraidan18/hockey_data/main/data/hockey_stats_${selectedSeason}.csv`);
         const csvText = await response.text();
         const result = Papa.parse(csvText, {
           header: true,
@@ -31,7 +32,7 @@ const HockeyDashboard = () => {
     };
     
     fetchData();
-  }, []);
+  }, [selectedSeason]);
 
   // Function to determine bar color based on value
   const getBarColor = (value) => {
@@ -94,9 +95,20 @@ const HockeyDashboard = () => {
 
   return (
     <div className="p-2 sm:p-4">
-      <div className="mb-4">
-        <select 
-          value={selectedPlayer} 
+      <div className="flex gap-4 mb-4">
+        <select
+          value={selectedSeason}
+          onChange={(e) => setSelectedSeason(Number(e.target.value))}
+          className="w-32 p-2 border rounded text-white bg-gray-800"
+        >
+          {AVAILABLE_SEASONS.map(season => (
+            <option key={season} value={season} className="text-black bg-white">
+              {season}
+            </option>
+          ))}
+        </select>
+        <select
+          value={selectedPlayer}
           onChange={(e) => setSelectedPlayer(e.target.value)}
           className="w-full sm:w-64 p-2 border rounded text-white bg-gray-800"
         >
