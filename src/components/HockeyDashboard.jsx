@@ -14,6 +14,7 @@ const HockeyDashboard = () => {
       try {
         const response = await fetch(`https://raw.githubusercontent.com/barraidan18/hockey_data/main/data/hockey_stats_${selectedSeason}.csv`);
         const csvText = await response.text();
+        console.log('Response status:', response.status);
         const result = Papa.parse(csvText, {
           header: true,
           dynamicTyping: true,
