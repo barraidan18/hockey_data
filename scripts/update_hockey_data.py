@@ -5,6 +5,24 @@ from datetime import datetime
 import json
 import os
 
+def get_current_nhl_season():
+    """
+    Determine current NHL season based on date.
+    Returns the start year of the season.
+    Example: In October 2023, returns 2023 (2023-24 season)
+            In February 2024, returns 2023 (2023-24 season)
+    """
+    current_date = datetime.now()
+    current_year = current_date.year
+    current_month = current_date.month
+    
+    # If we're in August through December, it's the start of a new season
+    if current_month >= 8:
+        return current_year
+    # If we're in January through July, it's the previous year's season
+    else:
+        return current_year - 1
+
 def fetch_skater_data(season_year=2023):
     """
     Fetch skater data from MoneyPuck for a specific season
@@ -121,30 +139,30 @@ def rename_columns(df):
 
 def main():
     print("Starting data update...")
-    
-    # Create data directory if it doesn't exist
     os.makedirs('data', exist_ok=True)
     
-    # Fetch and process data
-    season_year = 2023  # You could make this an argument or environment variable
-    df = fetch_skater_data(season_year)
-    df = calculate_per60_metrics(df)
-    df = calculate_relative_metrics(df)
-    df = calculate_zscores(df)
-    df = rename_columns(df)
+    current_season = get_current_nhl_season()
+    print(f"Updating data for NHL season {current_season}-{str(current_season + 1)[-2:]}")
     
-    # Select final columns
-    base_columns = ['playerId', 'season', 'name', 'team', 'position', 'situation', 'icetime']
-    metric_columns = ['xGF60', 'xGA60', 'CF60', 'CA60', 'xGImpact', 'CFImpact', 'A160', 'G60']
-    final_df = df[base_columns + metric_columns].copy()
-    
-    # Save to both CSV and JSON with year in filename
-    final_df.to_csv(f'data/hockey_stats_{season_year}.csv', index=False)
-    final_df.to_json(f'data/hockey_stats_{season_year}.json', orient='records')
-    
-    print(f"Processing complete. Saved {len(final_df)} records for {season_year} season.")
-    
-    print(f"Processing complete. Saved {len(final_df)} records.")
+    try:
+        df = fetch_skater_data(current_season)
+        df = calculate_per60_metrics(df)
+        df = calculate_relative_metrics(df)
+        df = calculate_zscores(df)
+        df = rename_columns(df)
+        
+        base_columns = ['playerId', 'season', 'name', 'team', 'position', 'situation', 'icetime']
+        metric_columns = ['xGF60', 'xGA60', 'CF60', 'CA60', 'xGImpact', 'CFImpact', 'A160', 'G60']
+        final_df = df[base_columns + metric_columns].copy()
+        
+        final_df.to_csv(f'data/hockey_stats_{current_season}.csv', index=False)
+        final_df.to_json(f'data/hockey_stats_{current_season}.json', orient='records')
+        
+        print(f"Processing complete. Saved {len(final_df)} records for {current_season} season.")
+        
+    except Exception as e:
+        print(f"Error processing {current_season} season: {str(e)}")
+        raise
 
 if __name__ == "__main__":
     main()

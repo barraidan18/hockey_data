@@ -6,13 +6,13 @@ const HockeyDashboard = () => {
   const [data, setData] = useState([]);
   const [selectedPlayer, setSelectedPlayer] = useState('');
   const [players, setPlayers] = useState([]);
-  const AVAILABLE_SEASONS = [2023,2022,2021];  // We'll expand this as more seasons are added
+  const AVAILABLE_SEASONS = [2024,2023,2022,2021];  // We'll expand this as more seasons are added
   const [selectedSeason, setSelectedSeason] = useState(AVAILABLE_SEASONS[0]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://raw.githubusercontent.com/barraidan18/hockey_data/main/data/hockey_stats_${selectedSeason}.csv`);
+        const response = await fetch(`https://raw.githubusercontent.com/barraidan18/hockey_data/feature/data/hockey_stats_${selectedSeason}.csv`);
         const csvText = await response.text();
         console.log('Response status:', response.status);
         const result = Papa.parse(csvText, {
