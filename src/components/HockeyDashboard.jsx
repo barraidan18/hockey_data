@@ -8,6 +8,10 @@ const HockeyDashboard = () => {
   const [players, setPlayers] = useState([]);
   const AVAILABLE_SEASONS = [2024,2023,2022,2021];  // We'll expand this as more seasons are added
   const [selectedSeason, setSelectedSeason] = useState(AVAILABLE_SEASONS[0]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const filteredPlayers = players.filter(player =>
+    player.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -95,7 +99,7 @@ const HockeyDashboard = () => {
   };
 
   return (
-    <div className="p-2 sm:p-4">
+    <div className="p-2 sm:p-4 w-full max-w-[2000px] mx-auto">
       <div className="flex gap-4 mb-4">
         <select
           value={selectedSeason}
@@ -108,20 +112,28 @@ const HockeyDashboard = () => {
             </option>
           ))}
         </select>
-        <select
-          value={selectedPlayer}
-          onChange={(e) => setSelectedPlayer(e.target.value)}
-          className="w-full sm:w-64 p-2 border rounded text-white bg-gray-800"
-        >
-          {players.map(player => (
-            <option key={player} value={player} className="text-black bg-white">
-              {player}
-            </option>
-          ))}
-        </select>
+        <div className="relative w-full sm:w-64">
+          <input
+            list="players"
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onSelect={(e) => {
+              setSelectedPlayer(e.target.value);
+              setSearchQuery(e.target.value);
+            }}
+            className="w-full p-2 border rounded text-white bg-gray-800"
+            placeholder="Search for a player..."
+          />
+          <datalist id="players">
+            {filteredPlayers.map(player => (
+              <option key={player} value={player} />
+            ))}
+          </datalist>
+        </div>
       </div>
 
-      <div className="grid gap-4 sm:gap-6 grid-cols-1">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-3 max-w-full w-full">
         <div className="p-4 sm:p-6 border rounded bg-white">
           <div className="mb-5">
             <h2 className="text-lg sm:text-xl font-bold">5 on 5 Performance</h2>
