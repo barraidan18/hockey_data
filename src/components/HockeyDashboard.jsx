@@ -61,27 +61,27 @@ const HockeyDashboard = () => {
     const descriptions = {
       'G60': 'Goals/60',
       'A160': 'Primary Assists/60',
-      'xGImpact': 'Expected Goals Impact',
-      'CFImpact': 'Shot Attempts Impact',
-      'xGF60': 'Expected Goals For/60',
-      'CF60': 'Shot Attempts For/60',
-      'xGA60': 'Expected Goals Against/60',
-      'CA60': 'Shot Attempts Against/60'
+      'xGImpact': 'Relative xG %',
+      'CFImpact': 'Relative SA %',
+      'xGF60': 'Relative xG For/60',
+      'CF60': 'Relative SA For/60',
+      'xGA60': 'Relative xG Against/60',
+      'CA60': 'Relative SA Against/60'
     };
     return descriptions[metricName] || metricName;
   };
 
   const getFourOnFiveMetrics = (playerData) => {
     return [
-      { name: 'xGA60', description: 'Expected Goals Against/60', value: playerData.xGA60 },
-      { name: 'CA60', description: 'Shot Attempts Against/60', value: playerData.CA60 }
+      { name: 'xGA60', description: 'Relative xG Against/60', value: playerData.xGA60 },
+      { name: 'CA60', description: 'Relative SA Against/60', value: playerData.CA60 }
     ].filter(metric => metric.value !== undefined);
   };
 
   const getFiveOnFourMetrics = (playerData) => {
     return [
-      { name: 'xGF60', description: 'Expected Goals For/60', value: playerData.xGF60 },
-      { name: 'CF60', description: 'Shot Attempts For/60', value: playerData.CF60 }
+      { name: 'xGF60', description: 'Relative xG For/60', value: playerData.xGF60 },
+      { name: 'CF60', description: 'Relative SA Against/60', value: playerData.CF60 }
     ].filter(metric => metric.value !== undefined);
   };
 
@@ -89,12 +89,12 @@ const HockeyDashboard = () => {
     return [
       { name: 'G60', description: 'Goals/60', value: playerData.G60 },
       { name: 'A160', description: 'Primary Assists/60', value: playerData.A160 },
-      { name: 'xGImpact', description: 'Expected Goals Impact', value: playerData.xGImpact },
-      { name: 'CFImpact', description: 'Shot Attempts Impact', value: playerData.CFImpact },
-      { name: 'xGF60', description: 'Expected Goals For/60', value: playerData.xGF60 },
-      { name: 'CF60', description: 'Shot Attempts For/60', value: playerData.CF60 },
-      { name: 'xGA60', description: 'Expected Goals Against/60', value: playerData.xGA60 },
-      { name: 'CA60', description: 'Shot Attempts Against/60', value: playerData.CA60 }
+      { name: 'xGImpact', description: 'Relative xG%', value: playerData.xGImpact },
+      { name: 'CFImpact', description: 'Relative SA%', value: playerData.CFImpact },
+      { name: 'xGF60', description: 'Relative xG For/60', value: playerData.xGF60 },
+      { name: 'CF60', description: 'Relative SA For/60', value: playerData.CF60 },
+      { name: 'xGA60', description: 'Relative xG Against/60', value: playerData.xGA60 },
+      { name: 'CA60', description: 'Relative SA Against/60', value: playerData.CA60 }
     ].filter(metric => metric.value !== undefined);
   };
 
@@ -117,16 +117,18 @@ const HockeyDashboard = () => {
             list="players"
             type="text"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onSelect={(e) => {
-              setSelectedPlayer(e.target.value);
+            onChange={(e) => {
               setSearchQuery(e.target.value);
+              // If the value matches a player exactly, update selectedPlayer
+              if (players.includes(e.target.value)) {
+                setSelectedPlayer(e.target.value);
+              }
             }}
             className="w-full p-2 border rounded text-white bg-gray-800"
             placeholder="Search for a player..."
           />
           <datalist id="players">
-            {filteredPlayers.map(player => (
+            {filteredPlayers.slice(0, 50).map(player => (
               <option key={player} value={player} />
             ))}
           </datalist>
