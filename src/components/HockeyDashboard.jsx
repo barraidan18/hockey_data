@@ -61,27 +61,27 @@ const HockeyDashboard = () => {
     const descriptions = {
       'G60': 'Goals/60',
       'A160': 'Primary Assists/60',
-      'xGImpact': 'Relative xG %',
-      'CFImpact': 'Relative SA %',
-      'xGF60': 'Relative xG For/60',
-      'CF60': 'Relative SA For/60',
-      'xGA60': 'Relative xG Against/60',
-      'CA60': 'Relative SA Against/60'
+      'xGImpact': 'Relative xG%',
+      'CFImpact': 'Relative CF%',
+      'xGF60': 'Relative xGF/60',
+      'CF60': 'Relative CF/60',
+      'xGA60': 'Relative xGA/60',
+      'CA60': 'Relative CA/60'
     };
     return descriptions[metricName] || metricName;
   };
 
   const getFourOnFiveMetrics = (playerData) => {
     return [
-      { name: 'xGA60', description: 'Relative xG Against/60', value: playerData.xGA60 },
-      { name: 'CA60', description: 'Relative SA Against/60', value: playerData.CA60 }
+      { name: 'xGA60', description: 'Relative xGA/60', value: playerData.xGA60 },
+      { name: 'CA60', description: 'Relative CF/60', value: playerData.CA60 }
     ].filter(metric => metric.value !== undefined);
   };
 
   const getFiveOnFourMetrics = (playerData) => {
     return [
-      { name: 'xGF60', description: 'Relative xG For/60', value: playerData.xGF60 },
-      { name: 'CF60', description: 'Relative SA Against/60', value: playerData.CF60 }
+      { name: 'xGF60', description: 'Relative xGF/60', value: playerData.xGF60 },
+      { name: 'CF60', description: 'Relative CF/60', value: playerData.CF60 }
     ].filter(metric => metric.value !== undefined);
   };
 
@@ -89,12 +89,12 @@ const HockeyDashboard = () => {
     return [
       { name: 'G60', description: 'Goals/60', value: playerData.G60 },
       { name: 'A160', description: 'Primary Assists/60', value: playerData.A160 },
-      { name: 'xGImpact', description: 'Expected Goals Impact', value: playerData.xGImpact },
-      { name: 'CFImpact', description: 'Shot Attempts Impact', value: playerData.CFImpact },
-      { name: 'xGF60', description: 'Expected Goals For/60', value: playerData.xGF60 },
-      { name: 'CF60', description: 'Shot Attempts For/60', value: playerData.CF60 },
-      { name: 'xGA60', description: 'Expected Goals Against/60', value: playerData.xGA60 },
-      { name: 'CA60', description: 'Shot Attempts Against/60', value: playerData.CA60 }
+      { name: 'xGImpact', description: 'Relative xG%', value: playerData.xGImpact },
+      { name: 'CFImpact', description: 'Relative CF%', value: playerData.CFImpact },
+      { name: 'xGF60', description: 'Relative xGF/60', value: playerData.xGF60 },
+      { name: 'CF60', description: 'Relative CF/60', value: playerData.CF60 },
+      { name: 'xGA60', description: 'Relative xGA/60', value: playerData.xGA60 },
+      { name: 'CA60', description: 'Relative CA/60', value: playerData.CA60 }
     ].filter(metric => metric.value !== undefined);
   };
 
