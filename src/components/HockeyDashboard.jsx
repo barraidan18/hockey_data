@@ -89,12 +89,12 @@ const HockeyDashboard = () => {
     return [
       { name: 'G60', description: 'Goals/60', value: playerData.G60 },
       { name: 'A160', description: 'Primary Assists/60', value: playerData.A160 },
-      { name: 'xGImpact', description: 'Relative xG%', value: playerData.xGImpact },
-      { name: 'CFImpact', description: 'Relative SA%', value: playerData.CFImpact },
-      { name: 'xGF60', description: 'Relative xG For/60', value: playerData.xGF60 },
-      { name: 'CF60', description: 'Relative SA For/60', value: playerData.CF60 },
-      { name: 'xGA60', description: 'Relative xGA/60', value: playerData.xGA60 },
-      { name: 'CA60', description: 'Relative CA/60', value: playerData.CA60 }
+      { name: 'xGImpact', description: 'Expected Goals Impact', value: playerData.xGImpact },
+      { name: 'CFImpact', description: 'Shot Attempts Impact', value: playerData.CFImpact },
+      { name: 'xGF60', description: 'Expected Goals For/60', value: playerData.xGF60 },
+      { name: 'CF60', description: 'Shot Attempts For/60', value: playerData.CF60 },
+      { name: 'xGA60', description: 'Expected Goals Against/60', value: playerData.xGA60 },
+      { name: 'CA60', description: 'Shot Attempts Against/60', value: playerData.CA60 }
     ].filter(metric => metric.value !== undefined);
   };
 
